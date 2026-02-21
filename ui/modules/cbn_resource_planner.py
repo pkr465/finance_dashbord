@@ -181,14 +181,14 @@ def build_mountain_chart(
     # Aggregate by project (sum across countries)
     proj_agg = pivot_df.groupby("project_name")[month_columns].sum()
 
-    # Greenback Finance palette — shades of dollar-bill green, gold, sage
+    # High-contrast multi-color palette for light background
     colors = [
-        "#2E7D32", "#43A047", "#66BB6A", "#1B5E20", "#388E3C",
-        "#4CAF50", "#81C784", "#A5D6A7", "#C5A236", "#D4A84B",
-        "#8BC34A", "#558B2F", "#33691E", "#689F38", "#7CB342",
-        "#9CCC65", "#AED581", "#C5E1A5", "#795548", "#8D6E63",
-        "#BCAAA4", "#607D8B", "#78909C", "#90A4AE", "#B0BEC5",
-        "#004D40", "#00695C", "#00796B", "#00897B", "#26A69A",
+        "#1B5E20", "#0D47A1", "#E65100", "#6A1B9A", "#00838F",
+        "#C62828", "#2E7D32", "#4527A0", "#EF6C00", "#00695C",
+        "#AD1457", "#1565C0", "#F9A825", "#283593", "#558B2F",
+        "#4E342E", "#00796B", "#D84315", "#5C6BC0", "#827717",
+        "#37474F", "#880E4F", "#01579B", "#BF360C", "#1A237E",
+        "#33691E", "#006064", "#B71C1C", "#311B92", "#FF6F00",
     ]
 
     # Add stacked area traces in project order
@@ -223,7 +223,7 @@ def build_mountain_chart(
                 y=cap_values,
                 name="Capacity",
                 mode="lines",
-                line=dict(color="#C5A236", width=3, dash="dash"),
+                line=dict(color="#8B6914", width=3, dash="dash"),
                 hovertemplate="<b>Capacity</b><br>Month: %{x}<br>HC: %{y:.2f}<extra></extra>",
             ))
 
@@ -240,38 +240,38 @@ def build_mountain_chart(
                         )
 
     fig.update_layout(
-        template="plotly_dark",
-        paper_bgcolor="#080E08",
-        plot_bgcolor="#0E1A10",
+        template="plotly_white",
+        paper_bgcolor="#F1F8F1",
+        plot_bgcolor="#FFFFFF",
         height=max(500, 70 * len(visible_months) // 10 + 300),
         margin=dict(l=60, r=20, t=40, b=60),
-        font=dict(family="IBM Plex Sans, sans-serif", color="#D4E8D0"),
+        font=dict(family="IBM Plex Sans, sans-serif", color="#1A2E1A"),
         xaxis=dict(
-            title=dict(text="Month", font=dict(color="#8FBC8B")),
+            title=dict(text="Month", font=dict(color="#4A6B4A")),
             tickangle=-45,
-            tickfont=dict(color="#8FBC8B"),
-            gridcolor="#1B3A1F",
+            tickfont=dict(color="#4A6B4A"),
+            gridcolor="#E0F0E0",
             zeroline=False,
         ),
         yaxis=dict(
-            title=dict(text="Headcount (HC)", font=dict(color="#8FBC8B")),
+            title=dict(text="Headcount (HC)", font=dict(color="#4A6B4A")),
             range=[y_min, y_max] if y_min is not None or y_max is not None else None,
-            tickfont=dict(color="#8FBC8B", family="IBM Plex Mono, monospace"),
-            gridcolor="#1B3A1F",
+            tickfont=dict(color="#4A6B4A", family="IBM Plex Mono, monospace"),
+            gridcolor="#E0F0E0",
             zeroline=False,
         ),
         legend=dict(
             orientation="h", yanchor="top", y=-0.15, xanchor="center", x=0.5,
-            font=dict(size=10, color="#A5D6A7"),
-            bgcolor="rgba(8,14,8,0.8)",
-            bordercolor="#1B3A1F",
+            font=dict(size=10, color="#1A2E1A"),
+            bgcolor="rgba(255,255,255,0.9)",
+            bordercolor="#C8DCC8",
             borderwidth=1,
         ),
         hovermode="x unified",
         hoverlabel=dict(
-            bgcolor="#132117",
+            bgcolor="#FFFFFF",
             bordercolor="#2E7D32",
-            font=dict(color="#D4E8D0", family="IBM Plex Mono, monospace"),
+            font=dict(color="#1A2E1A", family="IBM Plex Mono, monospace"),
         ),
     )
 
@@ -305,7 +305,7 @@ class CBNResourcePlanner:
             unsafe_allow_html=True,
         )
         st.markdown(
-            "<p style='text-align:center; color:#8FBC8B; font-style:italic; font-size:15px;'>"
+            "<p style='text-align:center; color:#4A6B4A; font-style:italic; font-size:15px;'>"
             "Dynamic mountain charts, cost estimation & resource analysis from Tempus forecast data. "
             "Adjust capacity, reorder projects, apply filters, and explore what-if scenarios."
             "</p>",
@@ -409,6 +409,7 @@ class CBNResourcePlanner:
             st.session_state["shift_values"] = {}
             st.session_state["cell_overrides"] = {}
             st.session_state["show_gap_markers"] = True
+            st.session_state["hidden_projects"] = set()
             st.session_state["snapshots"] = []
             st.session_state["cbn_initialized"] = True
 
@@ -509,14 +510,15 @@ class CBNResourcePlanner:
     # -------------------------------------------------------------------
 
     def _render_project_order_panel(self, pivot_df: pd.DataFrame):
-        """Render project ordering interface."""
+        """Render project ordering interface with hide/show toggle."""
         with st.expander("Project Order", expanded=False):
-            st.caption("Reorder projects to change how they stack in the chart.")
+            st.caption("Reorder projects or hide them from the chart. Hidden projects are excluded from the mountain chart and totals.")
 
             # Search filter
             search = st.text_input("Search projects", key="proj_search", placeholder="Type to filter...")
 
             order = st.session_state.get("project_order", [])
+            hidden = st.session_state.get("hidden_projects", set())
             available = pivot_df["project_name"].unique().tolist()
             # Add any new projects from data not in order
             for p in available:
@@ -528,18 +530,34 @@ class CBNResourcePlanner:
             if search:
                 display_order = [p for p in order if search.lower() in p.lower()]
 
-            # Reset button
-            if st.button("Default Order", key="default_order"):
-                st.session_state["project_order"] = sorted(available)
-                st.rerun()
+            # Action buttons
+            btn_cols = st.columns(3)
+            with btn_cols[0]:
+                if st.button("Default Order", key="default_order"):
+                    st.session_state["project_order"] = sorted(available)
+                    st.rerun()
+            with btn_cols[1]:
+                if st.button("Show All", key="show_all_proj"):
+                    st.session_state["hidden_projects"] = set()
+                    st.rerun()
+            with btn_cols[2]:
+                hidden_count = len(hidden)
+                if hidden_count > 0:
+                    st.caption(f"{hidden_count} hidden")
 
-            # Display projects with move buttons
+            # Display projects with move + hide buttons
             for idx, proj in enumerate(display_order):
                 real_idx = order.index(proj)
-                col1, col2, col3, col4, col5 = st.columns([4, 1, 1, 1, 1])
+                is_hidden = proj in hidden
+                col1, col2, col3, col4, col5, col6 = st.columns([4, 1, 1, 1, 1, 1])
 
                 with col1:
-                    st.text(f"{idx + 1}. {proj}")
+                    label = f"{idx + 1}. {proj}"
+                    if is_hidden:
+                        st.markdown(f"<span style='color:#7A9A7A; text-decoration:line-through;'>{label}</span>",
+                                    unsafe_allow_html=True)
+                    else:
+                        st.text(label)
                 with col2:
                     if st.button("⬆", key=f"up_{proj}", help="Move up"):
                         if real_idx > 0:
@@ -563,6 +581,16 @@ class CBNResourcePlanner:
                         order.remove(proj)
                         order.append(proj)
                         st.session_state["project_order"] = order
+                        st.rerun()
+                with col6:
+                    toggle_label = "👁" if is_hidden else "🙈"
+                    toggle_help = "Show project" if is_hidden else "Hide project"
+                    if st.button(toggle_label, key=f"hide_{proj}", help=toggle_help):
+                        if is_hidden:
+                            hidden.discard(proj)
+                        else:
+                            hidden.add(proj)
+                        st.session_state["hidden_projects"] = hidden
                         st.rerun()
 
     # -------------------------------------------------------------------
@@ -634,9 +662,13 @@ class CBNResourcePlanner:
         # Apply shift overrides to pivot
         shifted_pivot = self._apply_shifts(pivot_df, month_cols)
 
+        # Exclude hidden projects from chart
+        hidden = st.session_state.get("hidden_projects", set())
+        visible_projects = [p for p in st.session_state.get("project_order", []) if p not in hidden]
+
         fig = build_mountain_chart(
             pivot_df=shifted_pivot,
-            project_order=st.session_state.get("project_order", []),
+            project_order=visible_projects,
             capacity_line=capacity_line,
             month_columns=month_cols,
             y_min=y_min if y_min else None,
@@ -644,6 +676,7 @@ class CBNResourcePlanner:
             x_start=x_start if x_start != "(auto)" else None,
             x_end=x_end if x_end != "(auto)" else None,
             show_gap_markers=show_gap,
+            selected_projects=visible_projects,
         )
 
         st.plotly_chart(fig, use_container_width=True, key="mountain_chart")
@@ -744,6 +777,11 @@ class CBNResourcePlanner:
         # Apply shifts
         shifted_pivot = self._apply_shifts(pivot_df, month_cols)
 
+        # Exclude hidden projects
+        hidden = st.session_state.get("hidden_projects", set())
+        if hidden:
+            shifted_pivot = shifted_pivot[~shifted_pivot["project_name"].isin(hidden)]
+
         # Filter by search
         display_df = shifted_pivot.copy()
         if table_search:
@@ -826,16 +864,16 @@ class CBNResourcePlanner:
             def highlight_gap(row):
                 if row.get("project_name") == "GAP (Cap - Demand)":
                     return [
-                        "background-color: #2a0a0a; color: #EF5350; font-weight: bold"
+                        "background-color: #FFEBEE; color: #C62828; font-weight: bold"
                         if isinstance(v, (int, float)) and v < 0
-                        else "background-color: #0a2a0e; color: #66BB6A; font-weight: bold"
+                        else "background-color: #E8F5E9; color: #1B5E20; font-weight: bold"
                         if isinstance(v, (int, float)) and v >= 0
                         else ""
                         for v in row
                     ]
                 if row.get("project_name") in ("GRAND TOTAL", "CAPACITY"):
                     return [
-                        "font-weight: bold; background-color: #132117; color: #C5A236; "
+                        "font-weight: bold; background-color: #E8F5E9; color: #1B5E20; "
                         "border-top: 2px solid #2E7D32"
                     ] * len(row)
                 return [""] * len(row)
@@ -877,6 +915,7 @@ class CBNResourcePlanner:
                 "country_capacities": st.session_state.get("country_capacities", {}),
                 "country_costs": st.session_state.get("country_costs", {}),
                 "project_order": st.session_state.get("project_order", []),
+                "hidden_projects": list(st.session_state.get("hidden_projects", set())),
             }
             st.session_state["snapshots"].append(snapshot)
             st.success(f"Snapshot #{len(st.session_state['snapshots'])} saved!")
@@ -889,6 +928,7 @@ class CBNResourcePlanner:
                 st.session_state["country_capacities"] = latest.get("country_capacities", {})
                 st.session_state["country_costs"] = latest.get("country_costs", {})
                 st.session_state["project_order"] = latest.get("project_order", [])
+                st.session_state["hidden_projects"] = set(latest.get("hidden_projects", []))
                 st.success("Snapshot loaded!")
                 st.rerun()
             else:
@@ -903,9 +943,11 @@ class CBNResourcePlanner:
             st.success(f"Added {tbd_name}")
 
     def _compute_gap_summary(self, pivot_df: pd.DataFrame, month_cols: list) -> pd.DataFrame:
-        """Compute gap summary by month."""
+        """Compute gap summary by month (excludes hidden projects)."""
         capacity_line = self._build_capacity_line(month_cols)
-        total_demand = pivot_df[month_cols].sum()
+        hidden = st.session_state.get("hidden_projects", set())
+        visible_pivot = pivot_df[~pivot_df["project_name"].isin(hidden)] if hidden else pivot_df
+        total_demand = visible_pivot[month_cols].sum()
 
         rows = []
         for month in month_cols:

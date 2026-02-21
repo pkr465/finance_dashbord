@@ -13,51 +13,50 @@ logger = logging.getLogger(__name__)
 
 
 # ================================================================
-#  GREENBACK FINANCE THEME — Professional Dollar-Bill Color Scheme
+#  GREENBACK FINANCE THEME — Light Professional Color Scheme
 # ================================================================
 #
-#  Palette:
-#    Background deep:   #080E08  (near-black green-tinted)
-#    Background panel:  #0E1A10  (dark forest)
-#    Surface:           #132117  (card / sidebar)
-#    Border:            #1B3A1F  (subtle green edge)
-#    Border accent:     #2E7D32  (dollar-bill green)
-#    Text primary:      #D4E8D0  (soft mint — high contrast on dark)
-#    Text secondary:    #8FBC8B  (muted sage)
-#    Heading:           #A5D6A7  (light green)
+#  Palette (Light Mode):
+#    Background page:   #F1F8F1  (light mint)
+#    Background card:   #FFFFFF  (white)
+#    Surface sidebar:   #E0F0E0  (soft sage)
+#    Border:            #C8DCC8  (light green edge)
+#    Border accent:     #1B5E20  (deep dollar green)
+#    Text primary:      #1A2E1A  (dark forest — high contrast)
+#    Text secondary:    #4A6B4A  (muted olive)
+#    Heading:           #1B5E20  (deep green)
 #    Accent primary:    #2E7D32  (US currency green)
-#    Accent bright:     #43A047  (hover / active green)
-#    Accent gold:       #C5A236  (gold foil accent)
-#    Positive:          #66BB6A  (gain green)
-#    Negative:          #EF5350  (loss red)
-#    Neutral muted:     #607D5F  (disabled / placeholder)
+#    Accent bright:     #1B5E20  (darker green for hover)
+#    Accent gold:       #8B6914  (dark gold — readable on light)
+#    Positive:          #1B5E20  (deep green)
+#    Negative:          #C62828  (strong red)
+#    Neutral muted:     #7A9A7A  (disabled / placeholder)
 # ================================================================
 
 FINANCE_CSS = """
 <style>
 /* ============================================================
-   GREENBACK FINANCE THEME
+   GREENBACK FINANCE THEME — LIGHT MODE
    ============================================================ */
 
-/* --- Import a monospace financial font for numbers --- */
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
 /* --- CSS Variables --- */
 :root {
-    --gb-bg-deep:      #080E08;
-    --gb-bg-panel:     #0E1A10;
-    --gb-surface:      #132117;
-    --gb-border:       #1B3A1F;
+    --gb-bg-deep:      #F1F8F1;
+    --gb-bg-panel:     #FFFFFF;
+    --gb-surface:      #E8F5E9;
+    --gb-border:       #C8DCC8;
     --gb-border-accent:#2E7D32;
-    --gb-text:         #D4E8D0;
-    --gb-text-sec:     #8FBC8B;
-    --gb-heading:      #A5D6A7;
+    --gb-text:         #1A2E1A;
+    --gb-text-sec:     #4A6B4A;
+    --gb-heading:      #1B5E20;
     --gb-accent:       #2E7D32;
-    --gb-accent-bright:#43A047;
-    --gb-gold:         #C5A236;
-    --gb-positive:     #66BB6A;
-    --gb-negative:     #EF5350;
-    --gb-muted:        #607D5F;
+    --gb-accent-bright:#1B5E20;
+    --gb-gold:         #8B6914;
+    --gb-positive:     #1B5E20;
+    --gb-negative:     #C62828;
+    --gb-muted:        #7A9A7A;
     --gb-radius:       8px;
     --gb-font:         'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     --gb-mono:         'IBM Plex Mono', 'SF Mono', 'Fira Code', monospace;
@@ -69,7 +68,7 @@ html, body, [class*="css"] {
     color: var(--gb-text) !important;
     background-color: var(--gb-bg-deep) !important;
     -webkit-font-smoothing: antialiased;
-    font-feature-settings: "tnum" on, "lnum" on;   /* tabular nums for aligned columns */
+    font-feature-settings: "tnum" on, "lnum" on;
 }
 
 .stApp {
@@ -81,13 +80,13 @@ h1, h2, h3, h4, h5, h6,
 [data-testid="stHeadingWithActionElements"] {
     font-family: var(--gb-font) !important;
     color: var(--gb-heading) !important;
-    font-weight: 600 !important;
+    font-weight: 700 !important;
     letter-spacing: -0.01em;
 }
 h1 {
-    background: linear-gradient(135deg, #A5D6A7 0%, #C5A236 100%) !important;
-    -webkit-background-clip: text !important;
-    -webkit-text-fill-color: transparent !important;
+    color: var(--gb-heading) !important;
+    -webkit-text-fill-color: var(--gb-heading) !important;
+    background: none !important;
     margin-bottom: 0.6em;
 }
 h2 { border-bottom: 2px solid var(--gb-border-accent); padding-bottom: 6px; }
@@ -115,9 +114,9 @@ section[data-testid="stSidebar"] .stButton > button {
     color: var(--gb-text) !important;
 }
 section[data-testid="stSidebar"] .stButton > button:hover {
-    border-color: var(--gb-accent-bright) !important;
-    background-color: rgba(46,125,50,0.15) !important;
-    color: var(--gb-accent-bright) !important;
+    border-color: var(--gb-accent) !important;
+    background-color: #E8F5E9 !important;
+    color: var(--gb-accent) !important;
 }
 section[data-testid="stSidebar"] .stButton > button[kind="primary"],
 section[data-testid="stSidebar"] .stButton > button[data-testid="stBaseButton-primary"] {
@@ -142,7 +141,7 @@ details, [data-testid="stExpander"] {
 [data-testid="stMetricValue"] {
     font-family: var(--gb-mono) !important;
     color: var(--gb-positive) !important;
-    font-weight: 600 !important;
+    font-weight: 700 !important;
 }
 [data-testid="stMetricLabel"] {
     color: var(--gb-text-sec) !important;
@@ -164,13 +163,13 @@ table {
     border: 1px solid var(--gb-border) !important;
     border-radius: var(--gb-radius) !important;
     overflow: hidden !important;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.25) !important;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.08) !important;
     margin-bottom: 1.5em !important;
     background-color: var(--gb-bg-panel) !important;
 }
 thead tr th {
-    background-color: var(--gb-surface) !important;
-    color: var(--gb-gold) !important;
+    background-color: #E8F5E9 !important;
+    color: var(--gb-heading) !important;
     font-family: var(--gb-font) !important;
     font-weight: 700 !important;
     font-size: 12px !important;
@@ -185,14 +184,14 @@ tbody tr td {
     color: var(--gb-text) !important;
     font-family: var(--gb-mono) !important;
     font-size: 13px !important;
-    border-bottom: 1px solid var(--gb-border) !important;
+    border-bottom: 1px solid #E0F0E0 !important;
     padding: 8px 14px !important;
 }
 tbody tr:nth-child(even) td {
-    background-color: rgba(14,26,16,0.6) !important;
+    background-color: #F7FCF7 !important;
 }
 tbody tr:hover td {
-    background-color: rgba(46,125,50,0.08) !important;
+    background-color: #E8F5E9 !important;
 }
 tbody tr:last-child td {
     border-bottom: none !important;
@@ -207,16 +206,16 @@ button[kind="secondary"] {
     font-size: 13px !important;
     border: 1px solid var(--gb-border) !important;
     background-color: var(--gb-bg-panel) !important;
-    color: var(--gb-accent-bright) !important;
+    color: var(--gb-accent) !important;
     transition: all 0.2s ease;
     padding: 6px 16px !important;
 }
 div.stButton > button:hover,
 button[kind="secondary"]:hover {
-    border-color: var(--gb-accent-bright) !important;
-    background-color: rgba(46,125,50,0.12) !important;
-    color: #fff !important;
-    box-shadow: 0 0 8px rgba(46,125,50,0.3);
+    border-color: var(--gb-accent) !important;
+    background-color: #E8F5E9 !important;
+    color: var(--gb-accent-bright) !important;
+    box-shadow: 0 1px 4px rgba(46,125,50,0.15);
 }
 button[kind="primary"],
 div.stButton > button[data-testid="stBaseButton-primary"] {
@@ -226,7 +225,7 @@ div.stButton > button[data-testid="stBaseButton-primary"] {
 }
 button[kind="primary"]:hover {
     background-color: var(--gb-accent-bright) !important;
-    box-shadow: 0 0 12px rgba(67,160,71,0.4);
+    box-shadow: 0 2px 8px rgba(27,94,32,0.25);
 }
 
 /* --- Inputs / Select / Number --- */
@@ -241,8 +240,8 @@ input, select, textarea,
     border-radius: var(--gb-radius) !important;
 }
 input:focus, select:focus, textarea:focus {
-    border-color: var(--gb-accent-bright) !important;
-    box-shadow: 0 0 0 2px rgba(46,125,50,0.25) !important;
+    border-color: var(--gb-accent) !important;
+    box-shadow: 0 0 0 2px rgba(46,125,50,0.15) !important;
     outline: none !important;
 }
 
@@ -274,35 +273,35 @@ hr, [data-testid="stDivider"] {
     font-family: var(--gb-font) !important;
 }
 .stSuccess, [data-testid="stAlert"][data-type="success"] {
-    background-color: rgba(46,125,50,0.1) !important;
+    background-color: #E8F5E9 !important;
     border-left: 4px solid var(--gb-positive) !important;
     color: var(--gb-positive) !important;
 }
 .stWarning, [data-testid="stAlert"][data-type="warning"] {
-    background-color: rgba(197,162,54,0.1) !important;
-    border-left: 4px solid var(--gb-gold) !important;
-    color: var(--gb-gold) !important;
+    background-color: #FFF8E1 !important;
+    border-left: 4px solid #F9A825 !important;
+    color: #8B6914 !important;
 }
 .stError, [data-testid="stAlert"][data-type="error"] {
-    background-color: rgba(239,83,80,0.08) !important;
+    background-color: #FFEBEE !important;
     border-left: 4px solid var(--gb-negative) !important;
     color: var(--gb-negative) !important;
 }
 .stInfo, [data-testid="stAlert"][data-type="info"] {
-    background-color: rgba(46,125,50,0.06) !important;
-    border-left: 4px solid var(--gb-accent) !important;
-    color: var(--gb-text) !important;
+    background-color: #E3F2FD !important;
+    border-left: 4px solid #1565C0 !important;
+    color: #1A2E1A !important;
 }
 
 /* --- Download buttons --- */
 [data-testid="stDownloadButton"] > button {
-    background-color: var(--gb-surface) !important;
+    background-color: var(--gb-bg-panel) !important;
     border: 1px solid var(--gb-gold) !important;
     color: var(--gb-gold) !important;
 }
 [data-testid="stDownloadButton"] > button:hover {
-    background-color: rgba(197,162,54,0.12) !important;
-    color: #fff !important;
+    background-color: #FFF8E1 !important;
+    color: #6B5010 !important;
 }
 
 /* --- File Uploader --- */
@@ -317,16 +316,16 @@ hr, [data-testid="stDivider"] {
 
 /* --- Spinner --- */
 .stSpinner > div > div {
-    border-top-color: var(--gb-accent-bright) !important;
+    border-top-color: var(--gb-accent) !important;
 }
 
 /* --- Scrollbar (Webkit) --- */
 ::-webkit-scrollbar { width: 8px; height: 8px; }
-::-webkit-scrollbar-track { background: var(--gb-bg-deep); }
-::-webkit-scrollbar-thumb { background: var(--gb-border); border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: var(--gb-accent); }
+::-webkit-scrollbar-track { background: #F1F8F1; }
+::-webkit-scrollbar-thumb { background: #C8DCC8; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #2E7D32; }
 
-/* --- Feedback Widget (override old blue theme) --- */
+/* --- Feedback Widget --- */
 .feedback-row {
     background-color: var(--gb-bg-panel);
     border: 1px solid var(--gb-border);
@@ -344,11 +343,11 @@ hr, [data-testid="stDivider"] {
     color: var(--gb-heading);
 }
 .feedback-summary {
-    background-color: rgba(46,125,50,0.15);
+    background-color: #E8F5E9;
     border: 1px solid var(--gb-accent);
     border-radius: 20px;
     padding: 4px 12px;
-    color: var(--gb-accent-bright);
+    color: var(--gb-accent);
     font-size: 13px;
     font-weight: 500;
     margin-left: 10px;
@@ -364,7 +363,7 @@ hr, [data-testid="stDivider"] {
     border-bottom: 2px solid transparent !important;
 }
 [data-testid="stTabs"] [role="tablist"] button[aria-selected="true"] {
-    color: var(--gb-accent-bright) !important;
+    color: var(--gb-accent) !important;
     border-bottom-color: var(--gb-accent) !important;
 }
 

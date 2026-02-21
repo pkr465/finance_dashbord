@@ -13,12 +13,12 @@ ABOUT_CSS = """
     text-align: center;
     padding: 2rem 1rem;
     margin-bottom: 2rem;
-    background: linear-gradient(135deg, #0E1A10 0%, #142014 50%, #0E1A10 100%);
-    border: 1px solid #1B3A1F;
+    background: linear-gradient(135deg, #E8F5E9 0%, #F1F8F1 50%, #E8F5E9 100%);
+    border: 1px solid #C8DCC8;
     border-radius: 12px;
 }
 .about-hero h2 {
-    color: #C5A236;
+    color: #1B5E20;
     font-family: 'IBM Plex Sans', sans-serif;
     font-weight: 700;
     font-size: 1.8rem;
@@ -26,28 +26,28 @@ ABOUT_CSS = """
     margin-bottom: 0.25rem;
 }
 .about-hero .version {
-    color: #66BB6A;
+    color: #2E7D32;
     font-family: 'IBM Plex Mono', monospace;
     font-size: 0.8rem;
     letter-spacing: 0.05em;
     margin-bottom: 1rem;
 }
 .about-hero p {
-    color: #A5C9A0;
+    color: #4A6B4A;
     font-size: 1rem;
     line-height: 1.6;
     max-width: 650px;
     margin: 0 auto;
 }
 .about-card {
-    background: linear-gradient(135deg, #0E1A10 0%, #111A11 100%);
-    border: 1px solid #1B3A1F;
+    background: #FFFFFF;
+    border: 1px solid #C8DCC8;
     border-radius: 8px;
     padding: 1.5rem;
     margin-bottom: 1rem;
 }
 .about-card h3 {
-    color: #C5A236;
+    color: #1B5E20;
     font-family: 'IBM Plex Sans', sans-serif;
     font-weight: 600;
     font-size: 1.05rem;
@@ -62,7 +62,7 @@ ABOUT_CSS = """
     margin: 0;
 }
 .about-card ul li {
-    color: #A5C9A0;
+    color: #4A6B4A;
     font-family: 'IBM Plex Sans', sans-serif;
     font-size: 0.9rem;
     line-height: 1.6;
@@ -83,22 +83,22 @@ ABOUT_CSS = """
     margin-top: 0.5rem;
 }
 .tech-badge {
-    background: #1B3A1F;
-    color: #66BB6A;
+    background: #E8F5E9;
+    color: #1B5E20;
     font-family: 'IBM Plex Mono', monospace;
     font-size: 0.75rem;
     padding: 0.3rem 0.75rem;
     border-radius: 4px;
-    border: 1px solid #2E7D3244;
+    border: 1px solid #C8DCC8;
 }
 .about-footer {
     text-align: center;
     padding: 1.5rem;
     margin-top: 1rem;
-    color: #5A7A56;
+    color: #7A9A7A;
     font-family: 'IBM Plex Mono', monospace;
     font-size: 0.75rem;
-    border-top: 1px solid #1B3A1F;
+    border-top: 1px solid #C8DCC8;
 }
 </style>
 """

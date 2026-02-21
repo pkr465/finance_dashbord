@@ -14,18 +14,18 @@ FAQ_CSS = """
     margin-bottom: 2rem;
 }
 .faq-header h2 {
-    color: #C5A236;
+    color: #1B5E20;
     font-family: 'IBM Plex Sans', sans-serif;
     font-weight: 700;
     letter-spacing: -0.02em;
 }
 .faq-header p {
-    color: #8FAE8B;
+    color: #4A6B4A;
     font-size: 0.95rem;
 }
 .faq-item {
-    background: linear-gradient(135deg, #0E1A10 0%, #111A11 100%);
-    border: 1px solid #1B3A1F;
+    background: #FFFFFF;
+    border: 1px solid #C8DCC8;
     border-left: 4px solid #2E7D32;
     border-radius: 8px;
     padding: 1.25rem 1.5rem;
@@ -33,10 +33,10 @@ FAQ_CSS = """
     transition: border-color 0.2s;
 }
 .faq-item:hover {
-    border-left-color: #C5A236;
+    border-left-color: #8B6914;
 }
 .faq-question {
-    color: #E8F5E9;
+    color: #1A2E1A;
     font-family: 'IBM Plex Sans', sans-serif;
     font-weight: 600;
     font-size: 1.05rem;
@@ -46,18 +46,18 @@ FAQ_CSS = """
     gap: 0.5rem;
 }
 .faq-question .icon {
-    color: #C5A236;
+    color: #8B6914;
     flex-shrink: 0;
 }
 .faq-answer {
-    color: #A5C9A0;
+    color: #4A6B4A;
     font-family: 'IBM Plex Sans', sans-serif;
     font-size: 0.93rem;
     line-height: 1.65;
     padding-left: 1.75rem;
 }
 .faq-category {
-    color: #C5A236;
+    color: #1B5E20;
     font-family: 'IBM Plex Sans', sans-serif;
     font-weight: 600;
     font-size: 0.8rem;
@@ -65,7 +65,7 @@ FAQ_CSS = """
     letter-spacing: 0.08em;
     margin: 2rem 0 0.75rem 0;
     padding-bottom: 0.4rem;
-    border-bottom: 1px solid #1B3A1F;
+    border-bottom: 1px solid #C8DCC8;
 }
 .faq-search-wrapper {
     margin-bottom: 1.5rem;
@@ -212,7 +212,7 @@ class FAQ(PageBase):
         if not results_found and query:
             st.markdown(
                 """
-                <div style="text-align:center; padding:2rem; color:#8FAE8B;">
+                <div style="text-align:center; padding:2rem; color:#4A6B4A;">
                     No FAQs match your search. Try different keywords or
                     ask the <strong>AI ChatBot</strong> for help.
                 </div>

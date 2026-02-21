@@ -32,47 +32,47 @@ CHAT_CSS = """
 <style>
 /* --- Chat Container --- */
 [data-testid="stChatMessage"] {
-    border: 1px solid #1B3A1F !important;
+    border: 1px solid #C8DCC8 !important;
     border-radius: 10px !important;
     margin-bottom: 12px !important;
     padding: 14px 18px !important;
-    background-color: #0E1A10 !important;
+    background-color: #FFFFFF !important;
     transition: border-color 0.2s ease;
 }
 [data-testid="stChatMessage"]:hover {
     border-color: #2E7D32 !important;
 }
 
-/* User messages — slightly different shade */
+/* User messages */
 [data-testid="stChatMessage"][data-testid*="user"],
 .stChatMessage:has([data-testid="chatAvatarIcon-user"]) {
-    background-color: #111E13 !important;
-    border-left: 3px solid #43A047 !important;
+    background-color: #F7FCF7 !important;
+    border-left: 3px solid #2E7D32 !important;
 }
 
 /* Assistant messages — gold left accent */
 [data-testid="stChatMessage"][data-testid*="assistant"],
 .stChatMessage:has([data-testid="chatAvatarIcon-assistant"]) {
-    background-color: #0E1A10 !important;
-    border-left: 3px solid #C5A236 !important;
+    background-color: #FFFFFF !important;
+    border-left: 3px solid #8B6914 !important;
 }
 
 /* Chat input box */
 [data-testid="stChatInput"] {
-    border-top: 1px solid #1B3A1F !important;
+    border-top: 1px solid #C8DCC8 !important;
     padding-top: 12px !important;
 }
 [data-testid="stChatInput"] textarea {
-    background-color: #0E1A10 !important;
-    border: 1px solid #1B3A1F !important;
+    background-color: #FFFFFF !important;
+    border: 1px solid #C8DCC8 !important;
     border-radius: 10px !important;
-    color: #D4E8D0 !important;
+    color: #1A2E1A !important;
     font-family: 'IBM Plex Sans', sans-serif !important;
     font-size: 14px !important;
 }
 [data-testid="stChatInput"] textarea:focus {
     border-color: #2E7D32 !important;
-    box-shadow: 0 0 0 2px rgba(46,125,50,0.2) !important;
+    box-shadow: 0 0 0 2px rgba(46,125,50,0.15) !important;
 }
 [data-testid="stChatInput"] button {
     background-color: #2E7D32 !important;
@@ -82,22 +82,22 @@ CHAT_CSS = """
 
 /* Welcome banner */
 .finance-welcome {
-    background: linear-gradient(135deg, #0E1A10 0%, #132117 50%, #0E1A10 100%);
-    border: 1px solid #1B3A1F;
-    border-left: 4px solid #C5A236;
+    background: linear-gradient(135deg, #E8F5E9 0%, #F1F8F1 50%, #E8F5E9 100%);
+    border: 1px solid #C8DCC8;
+    border-left: 4px solid #8B6914;
     border-radius: 10px;
     padding: 20px 24px;
     margin-bottom: 20px;
 }
 .finance-welcome h3 {
-    background: linear-gradient(135deg, #A5D6A7, #C5A236) !important;
-    -webkit-background-clip: text !important;
-    -webkit-text-fill-color: transparent !important;
+    color: #1B5E20 !important;
+    -webkit-text-fill-color: #1B5E20 !important;
+    background: none !important;
     margin: 0 0 8px 0 !important;
     font-size: 22px !important;
 }
 .finance-welcome p {
-    color: #8FBC8B !important;
+    color: #4A6B4A !important;
     margin: 0 !important;
     font-size: 14px;
     line-height: 1.6;
@@ -106,12 +106,12 @@ CHAT_CSS = """
 /* Example query chips */
 .query-chip {
     display: inline-block;
-    background-color: #132117;
-    border: 1px solid #1B3A1F;
+    background-color: #FFFFFF;
+    border: 1px solid #C8DCC8;
     border-radius: 20px;
     padding: 6px 16px;
     margin: 4px 6px 4px 0;
-    color: #A5D6A7;
+    color: #1B5E20;
     font-size: 13px;
     font-family: 'IBM Plex Sans', sans-serif;
     cursor: default;
@@ -119,25 +119,25 @@ CHAT_CSS = """
 }
 .query-chip:hover {
     border-color: #2E7D32;
-    color: #66BB6A;
-    background-color: rgba(46,125,50,0.08);
+    color: #1B5E20;
+    background-color: #E8F5E9;
 }
 .query-chip .chip-icon {
-    color: #C5A236;
+    color: #8B6914;
     margin-right: 6px;
 }
 
 /* Analysis cards inside chat */
 .analysis-card {
-    background-color: #132117;
-    border: 1px solid #1B3A1F;
+    background-color: #F7FCF7;
+    border: 1px solid #C8DCC8;
     border-radius: 8px;
     padding: 14px 18px;
     margin: 10px 0;
 }
 .analysis-card h4 {
-    color: #C5A236 !important;
-    -webkit-text-fill-color: #C5A236 !important;
+    color: #1B5E20 !important;
+    -webkit-text-fill-color: #1B5E20 !important;
     background: none !important;
     font-size: 15px !important;
     margin: 0 0 8px 0 !important;
@@ -155,8 +155,8 @@ CHAT_CSS = """
 .kpi-box {
     flex: 1;
     min-width: 120px;
-    background-color: #0E1A10;
-    border: 1px solid #1B3A1F;
+    background-color: #FFFFFF;
+    border: 1px solid #C8DCC8;
     border-radius: 8px;
     padding: 12px 16px;
     text-align: center;
@@ -165,31 +165,31 @@ CHAT_CSS = """
     font-family: 'IBM Plex Mono', monospace;
     font-size: 22px;
     font-weight: 700;
-    color: #66BB6A;
+    color: #1B5E20;
 }
 .kpi-box .kpi-label {
     font-size: 11px;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    color: #607D5F;
+    color: #7A9A7A;
     margin-top: 4px;
 }
 
 /* Spinner override for chat */
 .chat-spinner {
-    color: #C5A236 !important;
+    color: #2E7D32 !important;
 }
 
 /* Session info badge */
 .session-badge {
     display: inline-block;
-    background-color: #132117;
-    border: 1px solid #1B3A1F;
+    background-color: #E8F5E9;
+    border: 1px solid #C8DCC8;
     border-radius: 12px;
     padding: 2px 10px;
     font-family: 'IBM Plex Mono', monospace;
     font-size: 11px;
-    color: #607D5F;
+    color: #4A6B4A;
 }
 </style>
 """
@@ -260,16 +260,16 @@ class ChatBot(PageBase):
                 marker_color="#2E7D32",
                 text=df[num_cols[0]].apply(lambda v: f"{v:,.2f}"),
                 textposition="outside",
-                textfont=dict(color="#A5D6A7", size=11, family="IBM Plex Mono"),
+                textfont=dict(color="#1B5E20", size=11, family="IBM Plex Mono"),
             ))
             fig.update_layout(
-                title=dict(text=f"{num_cols[0]} by {label_col}", font=dict(color="#A5D6A7")),
-                template="plotly_dark",
-                paper_bgcolor="#0E1A10",
-                plot_bgcolor="#0E1A10",
-                font=dict(family="IBM Plex Sans", color="#D4E8D0"),
-                xaxis=dict(tickfont=dict(color="#8FBC8B"), gridcolor="#1B3A1F"),
-                yaxis=dict(tickfont=dict(color="#8FBC8B", family="IBM Plex Mono"), gridcolor="#1B3A1F"),
+                title=dict(text=f"{num_cols[0]} by {label_col}", font=dict(color="#1B5E20")),
+                template="plotly_white",
+                paper_bgcolor="#F1F8F1",
+                plot_bgcolor="#FFFFFF",
+                font=dict(family="IBM Plex Sans", color="#1A2E1A"),
+                xaxis=dict(tickfont=dict(color="#4A6B4A"), gridcolor="#E0F0E0"),
+                yaxis=dict(tickfont=dict(color="#4A6B4A", family="IBM Plex Mono"), gridcolor="#E0F0E0"),
                 height=350,
                 margin=dict(l=50, r=20, t=50, b=60),
             )
@@ -278,7 +278,7 @@ class ChatBot(PageBase):
         elif len(num_cols) >= 2 and len(df) <= 30:
             # Grouped bar for multiple metrics
             fig = go.Figure()
-            colors = ["#2E7D32", "#C5A236", "#43A047", "#66BB6A", "#8BC34A"]
+            colors = ["#1B5E20", "#0D47A1", "#E65100", "#6A1B9A", "#00838F"]
             for i, col in enumerate(num_cols[:5]):
                 fig.add_trace(go.Bar(
                     x=df[label_col].astype(str),
@@ -287,15 +287,15 @@ class ChatBot(PageBase):
                     marker_color=colors[i % len(colors)],
                 ))
             fig.update_layout(
-                title=dict(text="Comparative Analysis", font=dict(color="#A5D6A7")),
-                template="plotly_dark",
-                paper_bgcolor="#0E1A10",
-                plot_bgcolor="#0E1A10",
-                font=dict(family="IBM Plex Sans", color="#D4E8D0"),
+                title=dict(text="Comparative Analysis", font=dict(color="#1B5E20")),
+                template="plotly_white",
+                paper_bgcolor="#F1F8F1",
+                plot_bgcolor="#FFFFFF",
+                font=dict(family="IBM Plex Sans", color="#1A2E1A"),
                 barmode="group",
-                xaxis=dict(tickfont=dict(color="#8FBC8B"), gridcolor="#1B3A1F"),
-                yaxis=dict(tickfont=dict(color="#8FBC8B", family="IBM Plex Mono"), gridcolor="#1B3A1F"),
-                legend=dict(font=dict(color="#A5D6A7", size=11)),
+                xaxis=dict(tickfont=dict(color="#4A6B4A"), gridcolor="#E0F0E0"),
+                yaxis=dict(tickfont=dict(color="#4A6B4A", family="IBM Plex Mono"), gridcolor="#E0F0E0"),
+                legend=dict(font=dict(color="#1A2E1A", size=11)),
                 height=400,
                 margin=dict(l=50, r=20, t=50, b=60),
             )
