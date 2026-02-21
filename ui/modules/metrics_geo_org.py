@@ -29,8 +29,7 @@ class GeoOrgMetrics(PageBase):
             """
             with self.db.engine.connect() as conn:
                 return [row[0] for row in conn.execute(text(query)).fetchall()]
-        except Exception as e:
-            st.error(f"Error fetching projects: {e}")
+        except Exception:
             return []
 
     def _to_iso3(self, val):
@@ -146,6 +145,12 @@ class GeoOrgMetrics(PageBase):
     def render(self):
         super().render()
         st.title("Geo & Organizational Analytics")
+
+        from utils.models.database import check_opex_db
+        ok, err_msg = check_opex_db()
+        if not ok:
+            st.warning(err_msg)
+            return
 
         if not self.projects:
             st.warning("No projects found.")

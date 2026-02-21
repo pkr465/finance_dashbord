@@ -5,12 +5,59 @@ import pprint
 # (Assumes the file was named opex_provider.py)
 from utils.models.opex_provider import OpexHybridProvider
 
+logger = logging.getLogger(__name__)
+
 # Create the global Singleton instance
 # Other files will import this variable directly: "from database import OpexDB"
 OpexDB = OpexHybridProvider()
 
 # If you had a Vector DB provider, you would instantiate it here too:
-# VectorDB = VectorStoreProvider() 
+# VectorDB = VectorStoreProvider()
+
+
+# ---------------------------------------------------------------------------
+# pgvector health check — cached so it only runs once per process
+# ---------------------------------------------------------------------------
+_opex_db_status = None  # None = not checked, True = ok, str = error message
+
+
+def check_opex_db() -> tuple:
+    """
+    Check whether the opex_data_hybrid table is queryable.
+    Returns (ok: bool, error_message: str | None).
+    Result is cached for the lifetime of the process.
+    """
+    global _opex_db_status
+    if _opex_db_status is not None:
+        if _opex_db_status is True:
+            return True, None
+        return False, _opex_db_status
+
+    try:
+        from sqlalchemy import text
+        with OpexDB.engine.connect() as conn:
+            conn.execute(text("SELECT 1 FROM opex_data_hybrid LIMIT 1"))
+        _opex_db_status = True
+        return True, None
+    except Exception as e:
+        err_str = str(e)
+        if "vector" in err_str.lower() and ("libdir" in err_str.lower() or "no such file" in err_str.lower()):
+            msg = (
+                "The **pgvector** extension is not installed on your PostgreSQL server. "
+                "Install it (`sudo dnf install pgvector_15` on RHEL, `brew install pgvector` on macOS) "
+                "then restart PostgreSQL and run `CREATE EXTENSION IF NOT EXISTS vector;` in your database. "
+                "See the README for detailed instructions."
+            )
+        elif "does not exist" in err_str.lower() or "undefined_table" in err_str.lower():
+            msg = (
+                "The `opex_data_hybrid` table does not exist. "
+                "Run `python bootstrap_db.py` to initialize the database schema."
+            )
+        else:
+            msg = f"Database connection error: {err_str[:200]}"
+        _opex_db_status = msg
+        logger.warning(f"OpEx DB check failed: {msg}")
+        return False, msg
 
 if __name__ == "__main__":
     """

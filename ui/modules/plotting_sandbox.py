@@ -39,6 +39,16 @@ class SandboxPage(PageBase):
         st.title("Data Plotting Sandbox")
         st.markdown("Generate custom visualizations dynamically.")
 
+        from utils.models.database import check_opex_db
+        ok, err_msg = check_opex_db()
+        if not ok:
+            st.warning(err_msg)
+            return
+
+        if not self.projects:
+            st.warning("No projects found.")
+            return
+
         col_p, _ = st.columns([1,2])
         with col_p:
             proj = st.selectbox("Select Project Dataset", self.projects)

@@ -165,8 +165,7 @@ class DeptRollup(PageBase):
                         quarters_map[y].append(q)
             
             return years, quarters_map
-        except Exception as e:
-            print(f"Error fetching periods: {e}")
+        except Exception:
             return [], {}
 
     def get_data(self, lead_name: str, year: str, quarter: str) -> pd.DataFrame:
@@ -198,7 +197,13 @@ class DeptRollup(PageBase):
     def render(self):
         super().render()
         st.title("Department Leadership Rollup")
-        
+
+        from utils.models.database import check_opex_db
+        ok, err_msg = check_opex_db()
+        if not ok:
+            st.warning(err_msg)
+            return
+
         if not self.leads:
             st.warning("No Department Leads found or Database not connected.")
             return

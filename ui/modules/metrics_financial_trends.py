@@ -99,7 +99,13 @@ class FinancialTrends(PageBase):
     def render(self):
         super().render()
         st.title("Financial Trends Analysis")
-        
+
+        from utils.models.database import check_opex_db
+        ok, err_msg = check_opex_db()
+        if not ok:
+            st.warning(err_msg)
+            return
+
         if not self.projects:
             st.warning("No projects found.")
             return

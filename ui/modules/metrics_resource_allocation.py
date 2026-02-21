@@ -82,7 +82,17 @@ class ResourceAllocation(PageBase):
     def render(self):
         super().render()
         st.title("Resource & Headcount Analytics")
-        
+
+        from utils.models.database import check_opex_db
+        ok, err_msg = check_opex_db()
+        if not ok:
+            st.warning(err_msg)
+            return
+
+        if not self.projects:
+            st.warning("No projects found.")
+            return
+
         col1, _ = st.columns([1, 2])
         with col1:
             proj = st.selectbox("Select Project", self.projects)
