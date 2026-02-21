@@ -59,29 +59,33 @@ pip install qgenie-sdk[all] qgenie-sdk-tools \
 
 ### 5. Configure Environment
 
-Copy and edit the configuration files:
+Copy the example environment file and update it with your credentials:
 
 ```bash
-cp config/config.yaml config/config.yaml.local   # optional local override
+cp .env.example .env
 ```
 
-Edit `config/config.yaml` to set:
-
-- **Qgenie section** — your `api_key` and `chat_endpoint`
-- **Postgres section** — your database connection credentials (`username`, `password`, `host`, `port`, `database`)
-- **Model names** — LLM model references for coding/reasoning agents
-
-Alternatively, create a `.env` file in the project root. Environment variables override YAML settings:
+Open `.env` in your editor and update the **required** values:
 
 ```env
-QGENIE_API_KEY=your-api-key-here
-POSTGRES_CONNECTION=postgresql+psycopg2://user:pass@localhost/cnss_opex_db
-POSTGRES_USER=your_db_user
-POSTGRES_PWD=your_db_password
-POSTGRES_DB_NAME=cnss_opex_db
+# ── REQUIRED ──────────────────────────────────────────────
+QGENIE_API_KEY=your-actual-api-key        # QGenie LLM API key
+QGENIE_CHAT_ENDPOINT=https://qgenie-chat.qualcomm.com
+
+# ── PostgreSQL Credentials ────────────────────────────────
+POSTGRES_CONNECTION=postgresql+psycopg2://your_user:your_pass@localhost/cnss_opex_db
 POSTGRES_HOST=localhost
 POSTGRES_PORT=5432
+POSTGRES_DB_NAME=cnss_opex_db
+POSTGRES_USER=your_db_user
+POSTGRES_PWD=your_db_password
+POSTGRES_ADMIN_USER=postgres
+POSTGRES_ADMIN_PWD=postgres
 ```
+
+The `.env.example` file contains all available settings with descriptions. Environment variables override any matching values in `config/config.yaml`.
+
+> **Note:** Never commit your `.env` file to version control. The `.env.example` is the safe, credential-free template to share with your team.
 
 ---
 
@@ -241,6 +245,7 @@ finance_dashbord/
 │   │   ├── cbn_data_parser.py #   BPAFG + Priority Template parser
 │   │   └── excel_to_json.py   #   Legacy Excel parser
 │   └── models/                #   Database models and providers
+├── .env.example               # Environment template (cp to .env)
 ├── bootstrap_db.py            # One-time DB schema initialization
 ├── main.py                    # Data ingestion entry point
 ├── requirements.txt           # Python dependencies
