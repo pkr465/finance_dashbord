@@ -355,11 +355,14 @@ class Summary(PageBase):
         super().render()
         st.title("Executive Dashboard")
 
-        from utils.models.database import check_opex_db
-        ok, err_msg = check_opex_db()
-        if not ok:
-            st.warning(err_msg)
-            return
+        try:
+            from utils.models.database import check_opex_db
+            ok, err_msg = check_opex_db()
+            if not ok:
+                st.warning(err_msg)
+                return
+        except ImportError:
+            pass  # check_opex_db not available — fall through to normal flow
 
         if not self.projects:
             st.warning("No projects found using key 'project_desc'. Please check database.")

@@ -83,11 +83,14 @@ class ResourceAllocation(PageBase):
         super().render()
         st.title("Resource & Headcount Analytics")
 
-        from utils.models.database import check_opex_db
-        ok, err_msg = check_opex_db()
-        if not ok:
-            st.warning(err_msg)
-            return
+        try:
+            from utils.models.database import check_opex_db
+            ok, err_msg = check_opex_db()
+            if not ok:
+                st.warning(err_msg)
+                return
+        except ImportError:
+            pass
 
         if not self.projects:
             st.warning("No projects found.")
