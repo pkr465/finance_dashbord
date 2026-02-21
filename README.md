@@ -59,33 +59,30 @@ pip install qgenie-sdk[all] qgenie-sdk-tools \
 
 ### 5. Configure Environment
 
-Copy the example environment file and update it with your credentials:
+The project uses two configuration layers:
+
+- **`config/config.yaml`** — All application settings (paths, models, endpoints, DB host/port, agent tuning, etc.)
+- **`.env`** — Only secrets and credentials (API keys, database passwords)
+
+**Step A:** Copy the example env file and fill in your secrets:
 
 ```bash
-cp .env.example .env
+cp env.example .env
 ```
 
-Open `.env` in your editor and update the **required** values:
+Open `.env` and set your credentials:
 
 ```env
-# ── REQUIRED ──────────────────────────────────────────────
-QGENIE_API_KEY=your-actual-api-key        # QGenie LLM API key
-QGENIE_CHAT_ENDPOINT=https://qgenie-chat.qualcomm.com
-
-# ── PostgreSQL Credentials ────────────────────────────────
-POSTGRES_CONNECTION=postgresql+psycopg2://your_user:your_pass@localhost/cnss_opex_db
-POSTGRES_HOST=localhost
-POSTGRES_PORT=5432
-POSTGRES_DB_NAME=cnss_opex_db
-POSTGRES_USER=your_db_user
-POSTGRES_PWD=your_db_password
+QGENIE_API_KEY=your-actual-api-key
 POSTGRES_ADMIN_USER=postgres
 POSTGRES_ADMIN_PWD=postgres
+POSTGRES_USER=your_db_user
+POSTGRES_PWD=your_db_password
 ```
 
-The `.env.example` file contains all available settings with descriptions. Environment variables override any matching values in `config/config.yaml`.
+**Step B:** Review `config/config.yaml` and adjust settings for your environment — database host/port, LLM model names, chat endpoint, file paths, agent parameters, etc. Secrets referenced via `NOTE` comments in the YAML are loaded from `.env` at runtime.
 
-> **Note:** Never commit your `.env` file to version control. The `.env.example` is the safe, credential-free template to share with your team.
+> **Note:** Never commit `.env` to version control. The `env.example` is the safe, credential-free template to share with your team.
 
 ---
 
@@ -245,7 +242,7 @@ finance_dashbord/
 │   │   ├── cbn_data_parser.py #   BPAFG + Priority Template parser
 │   │   └── excel_to_json.py   #   Legacy Excel parser
 │   └── models/                #   Database models and providers
-├── .env.example               # Environment template (cp to .env)
+├── env.example               # Environment template (cp to .env)
 ├── bootstrap_db.py            # One-time DB schema initialization
 ├── main.py                    # Data ingestion entry point
 ├── requirements.txt           # Python dependencies
