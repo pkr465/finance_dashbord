@@ -101,8 +101,26 @@ class DeptRollup(PageBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.db = OpexDB
-        self.leads = self.get_available_leads()
-        self.years, self.quarters_map = self.get_available_periods()
+        self._leads = None
+        self._periods = None
+
+    @property
+    def leads(self):
+        if self._leads is None:
+            self._leads = self.get_available_leads()
+        return self._leads
+
+    @property
+    def years(self):
+        if self._periods is None:
+            self._periods = self.get_available_periods()
+        return self._periods[0]
+
+    @property
+    def quarters_map(self):
+        if self._periods is None:
+            self._periods = self.get_available_periods()
+        return self._periods[1]
 
     def get_available_leads(self) -> List[str]:
         try:

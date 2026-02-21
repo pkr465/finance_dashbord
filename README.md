@@ -90,13 +90,13 @@ POSTGRES_PWD=your_db_password
 
 ### PostgreSQL (Production)
 
-#### Rocky Linux
+#### Rocky Linux / RHEL 8
 
 ```bash
 # Install PostgreSQL 15
 sudo dnf install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-8-x86_64/pgdg-redhat-repo-latest.noarch.rpm
 sudo dnf -qy module disable postgresql
-sudo dnf install -y postgresql15-server postgresql15-contrib postgresql15-pgvector
+sudo dnf install -y postgresql15-server postgresql15-contrib
 
 # Initialize and start
 sudo /usr/pgsql-15/bin/postgresql-15-setup initdb
@@ -104,15 +104,91 @@ sudo systemctl enable --now postgresql-15
 sudo systemctl status postgresql-15
 ```
 
+#### macOS (Homebrew)
+
+```bash
+# Install PostgreSQL 15
+brew install postgresql@15
+
+# Start the service
+brew services start postgresql@15
+
+# Add to PATH (if not already)
+echo 'export PATH="/opt/homebrew/opt/postgresql@15/bin:$PATH"' >> ~/.zshrc
+source ~/.zshrc
+```
+
 #### Windows
 
 Download from https://www.postgresql.org/download/windows/ and follow the installer. After installation, start the server:
 
 ```powershell
-& "C:\Program Files\PostgreSQL\16\bin\pg_ctl.exe" -D "C:\Users\<username>\PostgresData" -l "C:\Users\<username>\pg_log.txt" start
+& "C:\Program Files\PostgreSQL\15\bin\pg_ctl.exe" -D "C:\Users\<username>\PostgresData" -l "C:\Users\<username>\pg_log.txt" start
 ```
 
-#### Create Database and Extensions
+### Install pgvector Extension
+
+The platform uses PostgreSQL's `pgvector` extension for vector similarity search on the OpEx data. **This extension must be installed before creating the database schema.** Without it, any query on the `opex_data_hybrid` table will fail with `could not access file "$libdir/vector"`.
+
+#### Rocky Linux / RHEL 8
+
+```bash
+# pgvector is available in the PGDG repo you already added
+sudo dnf install -y pgvector_15
+```
+
+If the package is not found, install from source:
+
+```bash
+sudo dnf install -y postgresql15-devel gcc make git
+cd /tmp
+git clone --branch v0.8.0 https://github.com/pgvector/pgvector.git
+cd pgvector
+make PG_CONFIG=/usr/pgsql-15/bin/pg_config
+sudo make install PG_CONFIG=/usr/pgsql-15/bin/pg_config
+```
+
+#### macOS (Homebrew)
+
+```bash
+# pgvector is available as a Homebrew formula
+brew install pgvector
+```
+
+If using a Homebrew-installed PostgreSQL and the extension is not found, install from source:
+
+```bash
+cd /tmp
+git clone --branch v0.8.0 https://github.com/pgvector/pgvector.git
+cd pgvector
+make PG_CONFIG=$(brew --prefix postgresql@15)/bin/pg_config
+make install PG_CONFIG=$(brew --prefix postgresql@15)/bin/pg_config
+```
+
+#### Windows
+
+Download a prebuilt pgvector release from https://github.com/pgvector/pgvector/releases matching your PostgreSQL version. Extract and copy the files:
+
+- `vector.dll` → `C:\Program Files\PostgreSQL\15\lib\`
+- `vector.control` and `vector--*.sql` → `C:\Program Files\PostgreSQL\15\share\extension\`
+
+Alternatively, build from source using Visual Studio — see https://github.com/pgvector/pgvector#windows for instructions.
+
+#### Verify pgvector is Installed
+
+After installing the extension library, restart PostgreSQL and verify:
+
+```bash
+sudo systemctl restart postgresql-15    # Rocky Linux
+# brew services restart postgresql@15   # macOS
+```
+
+```bash
+psql -U postgres -c "CREATE EXTENSION IF NOT EXISTS vector;" -d template1
+# Should succeed without errors
+```
+
+### Create Database and Enable Extensions
 
 ```bash
 psql -U postgres
@@ -124,6 +200,8 @@ CREATE DATABASE cnss_opex_db;
 CREATE EXTENSION IF NOT EXISTS vector;
 \q
 ```
+
+> **Troubleshooting:** If you get `could not access file "$libdir/vector"`, the pgvector shared library is not installed correctly. Re-run the pgvector installation steps above for your OS and restart PostgreSQL.
 
 #### Initialize Schema
 

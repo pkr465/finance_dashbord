@@ -286,7 +286,13 @@ class Summary(PageBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.db = OpexDB
-        self.projects = self.get_available_projects()
+        self._projects = None  # lazy-loaded to avoid startup DB errors
+
+    @property
+    def projects(self):
+        if self._projects is None:
+            self._projects = self.get_available_projects()
+        return self._projects
 
     def get_available_projects(self) -> List[str]:
         """Fetch unique project names using the confirmed key 'project_desc'."""

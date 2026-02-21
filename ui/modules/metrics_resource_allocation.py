@@ -55,7 +55,13 @@ class ResourceAllocation(PageBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.db = OpexDB
-        self.projects = self.get_available_projects()
+        self._projects = None
+
+    @property
+    def projects(self):
+        if self._projects is None:
+            self._projects = self.get_available_projects()
+        return self._projects
 
     def get_available_projects(self):
         try:
