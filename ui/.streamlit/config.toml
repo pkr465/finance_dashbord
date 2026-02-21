@@ -1,12 +1,13 @@
 [theme]
 base = "dark"
-primaryColor="#cccccc"
-backgroundColor="#0d0d0d"
-secondaryBackgroundColor="#1a1a1a"
-textColor="#e6e6e6"
+primaryColor = "#2E7D32"
+backgroundColor = "#0A0F0A"
+secondaryBackgroundColor = "#111A11"
+textColor = "#D4E8D0"
+font = "sans serif"
 
 [server]
 address = "0.0.0.0"
 port = 8502
 enableCORS = false
-enableStaticServing=true
+enableStaticServing = true

@@ -12,146 +12,369 @@ import pandas as pd
 logger = logging.getLogger(__name__)
 
 
-# -------- App-wide CSS ---------
+# ================================================================
+#  GREENBACK FINANCE THEME — Professional Dollar-Bill Color Scheme
+# ================================================================
+#
+#  Palette:
+#    Background deep:   #080E08  (near-black green-tinted)
+#    Background panel:  #0E1A10  (dark forest)
+#    Surface:           #132117  (card / sidebar)
+#    Border:            #1B3A1F  (subtle green edge)
+#    Border accent:     #2E7D32  (dollar-bill green)
+#    Text primary:      #D4E8D0  (soft mint — high contrast on dark)
+#    Text secondary:    #8FBC8B  (muted sage)
+#    Heading:           #A5D6A7  (light green)
+#    Accent primary:    #2E7D32  (US currency green)
+#    Accent bright:     #43A047  (hover / active green)
+#    Accent gold:       #C5A236  (gold foil accent)
+#    Positive:          #66BB6A  (gain green)
+#    Negative:          #EF5350  (loss red)
+#    Neutral muted:     #607D5F  (disabled / placeholder)
+# ================================================================
+
+FINANCE_CSS = """
+<style>
+/* ============================================================
+   GREENBACK FINANCE THEME
+   ============================================================ */
+
+/* --- Import a monospace financial font for numbers --- */
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+/* --- CSS Variables --- */
+:root {
+    --gb-bg-deep:      #080E08;
+    --gb-bg-panel:     #0E1A10;
+    --gb-surface:      #132117;
+    --gb-border:       #1B3A1F;
+    --gb-border-accent:#2E7D32;
+    --gb-text:         #D4E8D0;
+    --gb-text-sec:     #8FBC8B;
+    --gb-heading:      #A5D6A7;
+    --gb-accent:       #2E7D32;
+    --gb-accent-bright:#43A047;
+    --gb-gold:         #C5A236;
+    --gb-positive:     #66BB6A;
+    --gb-negative:     #EF5350;
+    --gb-muted:        #607D5F;
+    --gb-radius:       8px;
+    --gb-font:         'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --gb-mono:         'IBM Plex Mono', 'SF Mono', 'Fira Code', monospace;
+}
+
+/* --- Global Body --- */
+html, body, [class*="css"] {
+    font-family: var(--gb-font) !important;
+    color: var(--gb-text) !important;
+    background-color: var(--gb-bg-deep) !important;
+    -webkit-font-smoothing: antialiased;
+    font-feature-settings: "tnum" on, "lnum" on;   /* tabular nums for aligned columns */
+}
+
+.stApp {
+    background-color: var(--gb-bg-deep) !important;
+}
+
+/* --- Headings --- */
+h1, h2, h3, h4, h5, h6,
+[data-testid="stHeadingWithActionElements"] {
+    font-family: var(--gb-font) !important;
+    color: var(--gb-heading) !important;
+    font-weight: 600 !important;
+    letter-spacing: -0.01em;
+}
+h1 {
+    background: linear-gradient(135deg, #A5D6A7 0%, #C5A236 100%) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    margin-bottom: 0.6em;
+}
+h2 { border-bottom: 2px solid var(--gb-border-accent); padding-bottom: 6px; }
+
+/* --- Paragraphs & Labels --- */
+p, span, label, .stCaption, [data-testid="stCaptionContainer"] {
+    color: var(--gb-text-sec) !important;
+}
+
+/* --- Sidebar --- */
+section[data-testid="stSidebar"] {
+    background-color: var(--gb-surface) !important;
+    border-right: 1px solid var(--gb-border) !important;
+}
+section[data-testid="stSidebar"] h1,
+section[data-testid="stSidebar"] h2,
+section[data-testid="stSidebar"] h3 {
+    color: var(--gb-heading) !important;
+    -webkit-text-fill-color: var(--gb-heading) !important;
+    background: none !important;
+}
+section[data-testid="stSidebar"] .stButton > button {
+    background-color: var(--gb-bg-panel) !important;
+    border: 1px solid var(--gb-border) !important;
+    color: var(--gb-text) !important;
+}
+section[data-testid="stSidebar"] .stButton > button:hover {
+    border-color: var(--gb-accent-bright) !important;
+    background-color: rgba(46,125,50,0.15) !important;
+    color: var(--gb-accent-bright) !important;
+}
+section[data-testid="stSidebar"] .stButton > button[kind="primary"],
+section[data-testid="stSidebar"] .stButton > button[data-testid="stBaseButton-primary"] {
+    background-color: var(--gb-accent) !important;
+    color: #fff !important;
+    border-color: var(--gb-accent) !important;
+}
+
+/* --- Expanders --- */
+details, [data-testid="stExpander"] {
+    border: 1px solid var(--gb-border) !important;
+    border-radius: var(--gb-radius) !important;
+    background-color: var(--gb-bg-panel) !important;
+}
+[data-testid="stExpander"] summary,
+[data-testid="stExpanderToggleIcon"] {
+    color: var(--gb-heading) !important;
+}
+
+/* --- Cards / Metric Boxes --- */
+[data-testid="stMetric"],
+[data-testid="stMetricValue"] {
+    font-family: var(--gb-mono) !important;
+    color: var(--gb-positive) !important;
+    font-weight: 600 !important;
+}
+[data-testid="stMetricLabel"] {
+    color: var(--gb-text-sec) !important;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 12px !important;
+}
+[data-testid="stMetricDelta"][data-testid*="positive"] { color: var(--gb-positive) !important; }
+[data-testid="stMetricDelta"][data-testid*="negative"] { color: var(--gb-negative) !important; }
+
+/* --- Tables & DataFrames --- */
+.stDataFrame, .stTable {
+    font-family: var(--gb-mono) !important;
+}
+table {
+    border-collapse: separate !important;
+    border-spacing: 0;
+    width: 100% !important;
+    border: 1px solid var(--gb-border) !important;
+    border-radius: var(--gb-radius) !important;
+    overflow: hidden !important;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.25) !important;
+    margin-bottom: 1.5em !important;
+    background-color: var(--gb-bg-panel) !important;
+}
+thead tr th {
+    background-color: var(--gb-surface) !important;
+    color: var(--gb-gold) !important;
+    font-family: var(--gb-font) !important;
+    font-weight: 700 !important;
+    font-size: 12px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.06em !important;
+    border-bottom: 2px solid var(--gb-border-accent) !important;
+    padding: 10px 14px !important;
+    text-align: left !important;
+}
+tbody tr td {
+    background-color: var(--gb-bg-panel) !important;
+    color: var(--gb-text) !important;
+    font-family: var(--gb-mono) !important;
+    font-size: 13px !important;
+    border-bottom: 1px solid var(--gb-border) !important;
+    padding: 8px 14px !important;
+}
+tbody tr:nth-child(even) td {
+    background-color: rgba(14,26,16,0.6) !important;
+}
+tbody tr:hover td {
+    background-color: rgba(46,125,50,0.08) !important;
+}
+tbody tr:last-child td {
+    border-bottom: none !important;
+}
+
+/* --- Buttons --- */
+div.stButton > button,
+button[kind="secondary"] {
+    font-family: var(--gb-font) !important;
+    border-radius: var(--gb-radius) !important;
+    font-weight: 600 !important;
+    font-size: 13px !important;
+    border: 1px solid var(--gb-border) !important;
+    background-color: var(--gb-bg-panel) !important;
+    color: var(--gb-accent-bright) !important;
+    transition: all 0.2s ease;
+    padding: 6px 16px !important;
+}
+div.stButton > button:hover,
+button[kind="secondary"]:hover {
+    border-color: var(--gb-accent-bright) !important;
+    background-color: rgba(46,125,50,0.12) !important;
+    color: #fff !important;
+    box-shadow: 0 0 8px rgba(46,125,50,0.3);
+}
+button[kind="primary"],
+div.stButton > button[data-testid="stBaseButton-primary"] {
+    background-color: var(--gb-accent) !important;
+    color: #fff !important;
+    border-color: var(--gb-accent) !important;
+}
+button[kind="primary"]:hover {
+    background-color: var(--gb-accent-bright) !important;
+    box-shadow: 0 0 12px rgba(67,160,71,0.4);
+}
+
+/* --- Inputs / Select / Number --- */
+input, select, textarea,
+[data-testid="stTextInput"] input,
+[data-testid="stNumberInput"] input,
+[data-testid="stSelectbox"] > div > div {
+    font-family: var(--gb-mono) !important;
+    background-color: var(--gb-bg-panel) !important;
+    color: var(--gb-text) !important;
+    border: 1px solid var(--gb-border) !important;
+    border-radius: var(--gb-radius) !important;
+}
+input:focus, select:focus, textarea:focus {
+    border-color: var(--gb-accent-bright) !important;
+    box-shadow: 0 0 0 2px rgba(46,125,50,0.25) !important;
+    outline: none !important;
+}
+
+/* --- Selectbox dropdowns --- */
+[data-testid="stSelectbox"] label {
+    color: var(--gb-text-sec) !important;
+    font-weight: 600 !important;
+    text-transform: uppercase;
+    font-size: 11px !important;
+    letter-spacing: 0.06em;
+}
+
+/* --- Checkboxes & Toggles --- */
+[data-testid="stCheckbox"] label span {
+    color: var(--gb-text) !important;
+}
+
+/* --- Dividers --- */
+hr, [data-testid="stDivider"] {
+    border: 0 !important;
+    border-top: 1px solid var(--gb-border) !important;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+/* --- Alerts / Info / Success / Error --- */
+[data-testid="stAlert"] {
+    border-radius: var(--gb-radius) !important;
+    font-family: var(--gb-font) !important;
+}
+.stSuccess, [data-testid="stAlert"][data-type="success"] {
+    background-color: rgba(46,125,50,0.1) !important;
+    border-left: 4px solid var(--gb-positive) !important;
+    color: var(--gb-positive) !important;
+}
+.stWarning, [data-testid="stAlert"][data-type="warning"] {
+    background-color: rgba(197,162,54,0.1) !important;
+    border-left: 4px solid var(--gb-gold) !important;
+    color: var(--gb-gold) !important;
+}
+.stError, [data-testid="stAlert"][data-type="error"] {
+    background-color: rgba(239,83,80,0.08) !important;
+    border-left: 4px solid var(--gb-negative) !important;
+    color: var(--gb-negative) !important;
+}
+.stInfo, [data-testid="stAlert"][data-type="info"] {
+    background-color: rgba(46,125,50,0.06) !important;
+    border-left: 4px solid var(--gb-accent) !important;
+    color: var(--gb-text) !important;
+}
+
+/* --- Download buttons --- */
+[data-testid="stDownloadButton"] > button {
+    background-color: var(--gb-surface) !important;
+    border: 1px solid var(--gb-gold) !important;
+    color: var(--gb-gold) !important;
+}
+[data-testid="stDownloadButton"] > button:hover {
+    background-color: rgba(197,162,54,0.12) !important;
+    color: #fff !important;
+}
+
+/* --- File Uploader --- */
+[data-testid="stFileUploader"] {
+    border: 2px dashed var(--gb-border) !important;
+    border-radius: var(--gb-radius) !important;
+    background-color: var(--gb-bg-panel) !important;
+}
+[data-testid="stFileUploader"]:hover {
+    border-color: var(--gb-accent) !important;
+}
+
+/* --- Spinner --- */
+.stSpinner > div > div {
+    border-top-color: var(--gb-accent-bright) !important;
+}
+
+/* --- Scrollbar (Webkit) --- */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--gb-bg-deep); }
+::-webkit-scrollbar-thumb { background: var(--gb-border); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--gb-accent); }
+
+/* --- Feedback Widget (override old blue theme) --- */
+.feedback-row {
+    background-color: var(--gb-bg-panel);
+    border: 1px solid var(--gb-border);
+    border-radius: 10px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 12px;
+    margin-bottom: 16px;
+}
+.feedback-label {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--gb-heading);
+}
+.feedback-summary {
+    background-color: rgba(46,125,50,0.15);
+    border: 1px solid var(--gb-accent);
+    border-radius: 20px;
+    padding: 4px 12px;
+    color: var(--gb-accent-bright);
+    font-size: 13px;
+    font-weight: 500;
+    margin-left: 10px;
+    display: inline-block;
+}
+
+/* --- Plotly Chart Background Override --- */
+.js-plotly-plot .plotly .main-svg { background: transparent !important; }
+
+/* --- Tab styling --- */
+[data-testid="stTabs"] [role="tablist"] button {
+    color: var(--gb-text-sec) !important;
+    border-bottom: 2px solid transparent !important;
+}
+[data-testid="stTabs"] [role="tablist"] button[aria-selected="true"] {
+    color: var(--gb-accent-bright) !important;
+    border-bottom-color: var(--gb-accent) !important;
+}
+
+</style>
+"""
+
+
 def app_css():
-    st.markdown(
-        """
-    <style>
-    /* --- Global Typography & Body --- */
-    html, body, [class*="css"] {
-        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
-        color: #1D1D1F !important; /* Apple text dark grey */
-        background-color: #FFFFFF !important;
-        -webkit-font-smoothing: antialiased;
-        font-feature-settings: "liga" on, "kern" on;
-    }
-
-    /* Force light background on main container */
-    .stApp {
-        background-color: #FFFFFF !important;
-    }
-
-    /* --- Headings --- */
-    h1, h2, h3, h4, h5, h6 {
-        color: #1D1D1F !important;
-        font-weight: 600 !important;
-        letter-spacing: -0.01em;
-    }
-    h1 {
-        /* Subtle Apple-style gradient text for main title if desired, or just solid */
-        background: linear-gradient(135deg, #1D1D1F 0%, #434344 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        margin-bottom: 0.8em;
-    }
-
-    /* --- Tables & DataFrames (Clean, Apple-like) --- */
-    .stDataFrame, .stTable {
-        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif !important;
-    }
-
-    /* Table Container */
-    table {
-        border-collapse: separate !important; 
-        border-spacing: 0;
-        width: 100% !important;
-        border: 1px solid #E5E5E5 !important;
-        border-radius: 12px !important;
-        overflow: hidden !important;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.04) !important;
-        margin-bottom: 1.5em !important;
-        background-color: #FFFFFF !important;
-    }
-
-    /* Header */
-    thead tr th {
-        background-color: #F5F5F7 !important; /* Apple light gray header */
-        color: #86868B !important; /* Secondary label color */
-        font-weight: 600 !important;
-        font-size: 13px !important;
-        text-transform: uppercase !important;
-        letter-spacing: 0.05em !important;
-        border-bottom: 1px solid #D2D2D7 !important;
-        padding: 12px 16px !important;
-        text-align: left !important;
-    }
-
-    /* Body Rows */
-    tbody tr td {
-        background-color: #FFFFFF !important;
-        color: #1D1D1F !important;
-        font-size: 14px !important;
-        border-bottom: 1px solid #F2F2F7 !important;
-        padding: 12px 16px !important;
-    }
-
-    /* Hover Effect */
-    tbody tr:hover td {
-        background-color: #FAFAFC !important; /* Extremely subtle hover */
-    }
-
-    /* Remove last border for clean look */
-    tbody tr:last-child td {
-        border-bottom: none !important;
-    }
-
-    /* --- UI Elements --- */
-    hr {
-        border: 0;
-        border-top: 1px solid #E5E5E5 !important;
-        margin-top: 24px;
-        margin-bottom: 24px;
-    }
-
-    /* Buttons (Native Streamlit buttons) - Optional override to match */
-    div.stButton > button {
-        border-radius: 8px !important;
-        font-weight: 500 !important;
-        border: 1px solid #E5E5E5 !important;
-        background-color: #FFFFFF !important;
-        color: #007AFF !important; /* Apple Blue */
-        transition: all 0.2s ease;
-    }
-    div.stButton > button:hover {
-        border-color: #007AFF !important;
-        background-color: #F0F8FF !important;
-    }
-
-    /* --- Feedback Widget Styling --- */
-    .feedback-row {
-        background-color: #FBFBFD;
-        border: 1px solid #E5E5E5;
-        border-radius: 12px;
-        padding: 12px 16px;
-        display: flex; 
-        align-items: center; 
-        gap: 16px; 
-        margin-top: 12px; 
-        margin-bottom: 16px;
-    }
-    .feedback-label { 
-        font-weight: 600; 
-        font-size: 14px; 
-        color: #1D1D1F;
-    }
-    /* Note: Streamlit buttons inside columns are hard to style via global CSS class alone, 
-       so we rely on the container style above. */
-
-    .feedback-summary {
-        background-color: #E3F2FD; /* Light Blue Pill */
-        border: 1px solid #CEE5FF;
-        border-radius: 20px; /* Pill shape */
-        padding: 4px 12px;
-        color: #007AFF;
-        font-size: 13px;
-        font-weight: 500;
-        margin-left: 10px;
-        display: inline-block;
-    }
-    </style>
-    """,
-        unsafe_allow_html=True,
-    )
+    """Inject the Greenback Finance theme CSS into every page."""
+    st.markdown(FINANCE_CSS, unsafe_allow_html=True)
 
 
 def extract_answer(agent_response):

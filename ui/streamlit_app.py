@@ -20,8 +20,12 @@ from ui.modules.metrics_resource_allocation import ResourceAllocation
 from ui.modules.metrics_geo_org import GeoOrgMetrics
 from ui.modules.plotting_sandbox import SandboxPage
 
+# Import CBN Resource Planner
+from ui.modules.cbn_resource_planner import CBNResourcePlanner
+
 # Define Pages
 PAGES = {
+    "Resource Planner": CBNResourcePlanner(title="CBN Resource Planner", url="cbn_planner"),
     "Summary": Summary(title="Project Summary", url="summary"),
     "Financial Trends": FinancialTrends(title="Financial Trends", url="financial_trends"),
     "Resource Alloc": ResourceAllocation(title="Resource Allocation", url="resource_allocation"),
@@ -35,7 +39,7 @@ PAGES = {
 }
 
 # Default Page
-DEFAULT_PAGE = PAGES["ChatBot"].url
+DEFAULT_PAGE = PAGES["Resource Planner"].url
 DEFAULT_PAGE_URL = DEFAULT_PAGE
 
 def canonical(slug: Optional[str]) -> str:
@@ -52,8 +56,15 @@ def canonical(slug: Optional[str]) -> str:
 
 def main():
     # Must be the first Streamlit command
-    st.set_page_config(layout="wide", page_title="Opex Dashboard")
-    
+    st.set_page_config(layout="wide", page_title="CBN Resource Planner")
+
+    # Inject Greenback Finance theme on every page
+    try:
+        from ui.streamlit_tools import app_css
+        app_css()
+    except Exception:
+        pass
+
     # 1. Router Logic
     query_params = st.query_params
     current_page_slug = query_params.get("page", DEFAULT_PAGE_URL)
