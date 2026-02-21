@@ -1,188 +1,317 @@
-**Finance Dashboard**
-========
+# Greenback Finance Intelligence Platform
 
+**CBN Resource Planner Edition** | v2.0
 
-Finance Dashboard is an assistant agent that analyzes spreadsheets by following user commands. 
-It breaks new ground in data analysis and interaction, opening up possibilities for enabling non-expert users to understand excel data using human language interface.
+An enterprise-grade financial analytics platform combining interactive resource planning, AI-powered data analysis, and comprehensive OpEx intelligence — built for finance teams that demand precision.
 
-## What's New
+---
 
-## TODO
-- Update the function call parsing code to fix the quote parsing errors
-- Update API implementations
-- Update the evaluation script to improve the checking accuracy
+## Features
 
-# Overview
+- **CBN Resource Planner** — Interactive mountain chart (stacked area) with priority-based project stacking, demand vs. capacity analysis, per-country cost controls, and real-time gap detection
+- **AI ChatBot** — Natural language financial queries powered by an orchestration agent pipeline (Intent → SQL/RAG/Chat), with auto-generated Plotly charts and executive-quality analysis
+- **Financial Analytics** — Trend tracking, department rollups, resource allocation views, geo/org analytics, and a custom plotting sandbox
+- **Data Ingestion** — CSV and XLSX parsers for BPAFG demand files and Priority Template files with automatic month normalization and wide-to-long data transformation
+- **Greenback UI Theme** — Professional dollar-bill green color scheme with IBM Plex typography, designed for financial dashboard readability
 
-Finance Dashboard employs a novel way of directing Large Language Models (LLMs) to analyze spreadsheets like a human expert. To achieve elegant closed-loop control, Finance Dashboard observes the spreadsheet state and polishes generated solutions according to external action documents and error feedback, thereby improving its success rate and efficiency.
+---
 
-# Setup
+## Prerequisites
+
+- **Python 3.12+**
+- **PostgreSQL 15+** with pgvector extension (or SQLite as fallback for local dev)
+- **pip** package manager
+
+---
+
+## Installation
+
+### 1. Clone the Repository
 
 ```bash
-sudo su
+git clone <repository-url>
+cd finance_dashbord
 ```
 
-```bash
-# if there is already an .env
-deactivate
-rm -rf .venv
+### 2. Create Virtual Environment
 
-# Create and activate virtual environment
+```bash
 python -m venv .venv
-source .venv/bin/activate
-python --version
+source .venv/bin/activate    # Linux/macOS
+# .venv\Scripts\activate     # Windows
+python --version             # Verify Python 3.12+
 ```
 
-### 4. Install Dependencies
+### 3. Install Dependencies
 
 ```bash
 pip install --upgrade pip
-
-pip install qgenie-sdk[all] qgenie-sdk-tools -i https://devpi.qualcomm.com/qcom/dev/+simple --trusted-host devpi.qualcomm.com
 pip install -r requirements.txt
 ```
 
-### DB Installation 
-1) Rocky Linux or
-2) Windows
+### 4. Install QGenie SDK (Internal)
 
-### Rocky linux
-- Install Postgresql and create a database called powerdb
+```bash
+pip install qgenie-sdk[all] qgenie-sdk-tools \
+  -i https://devpi.qualcomm.com/qcom/dev/+simple \
+  --trusted-host devpi.qualcomm.com
+```
 
-#### Enable the repo for PostgreSQL 15 (replace 15 with your preferred version if needed)
-- `sudo dnf install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-8-x86_64/pgdg-redhat-repo-latest.noarch.rpm`
+### 5. Configure Environment
 
-#### Disable the default module to avoid conflicts
-- `sudo dnf -qy module disable postgresql`
+Copy and edit the configuration files:
 
-#### Install PostgreSQL 15 server and contrib packages
-- `sudo dnf install -y postgresql15-server postgresql15-contrib postgresql15-pgvector`
+```bash
+cp config/config.yaml config/config.yaml.local   # optional local override
+```
 
-#### Initialize the database and enable/start PostgreSQL
-- `sudo /usr/pgsql-15/bin/postgresql-15-setup initdb` initializes DB cluster
-    - Note: If the data directory is not empty, the DB cluster is already initialized.
+Edit `config/config.yaml` to set:
 
-- `sudo systemctl enable --now postgresql-15` (OR) `sudo systemctl start postgresql-15` this starts the server
-    - Note: for windows powershell running `& "C:\Program Files\PostgreSQL\16\bin\pg_ctl.exe" -D "C:\Users\<username>\PostgresData" -l "C:\Users\<username>\pg_log.txt" start` will get response as *server started*
+- **Qgenie section** — your `api_key` and `chat_endpoint`
+- **Postgres section** — your database connection credentials (`username`, `password`, `host`, `port`, `database`)
+- **Model names** — LLM model references for coding/reasoning agents
 
-- `sudo systemctl status postgresql-15`
-    - Note: for windows powershell `& "C:\Program Files\PostgreSQL\16\bin\pg_ctl.exe" -D "C:\Users\<username>\PostgresData" status`
-    - Note: for windows powershell `& "C:\Program Files\PostgreSQL\16\bin\psql.exe" -U postgres -d rag_dashboard_v1` to enter psql prompt
+Alternatively, create a `.env` file in the project root. Environment variables override YAML settings:
 
-#### For windows
-- Download from https://www.postgresql.org/download/windows/
+```env
+QGENIE_API_KEY=your-api-key-here
+POSTGRES_CONNECTION=postgresql+psycopg2://user:pass@localhost/cnss_opex_db
+POSTGRES_USER=your_db_user
+POSTGRES_PWD=your_db_password
+POSTGRES_DB_NAME=cnss_opex_db
+POSTGRES_HOST=localhost
+POSTGRES_PORT=5432
+```
 
-#### pgvector extension
-- It is advised to follow the versions of pgvector, psycopg mentioned in the requirements
-- sudo dnf install -y postgresql15-pgvector 
+---
 
-#### For more clarifications or instructions
-- Please refer Postgresql Schema Setup section under USEFUL INFORMATION below
-- Or please look at tools/postgres_init.sh (which is a postgres db setup script)
+## Database Setup
 
-# Data
-Drop the excel file with the following schema into the ``<root>/data/excel_files`` folder.
+### PostgreSQL (Production)
 
-## Schema:
+#### Rocky Linux
 
-Please make sure the schema of the excel is as shown below:
+```bash
+# Install PostgreSQL 15
+sudo dnf install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-8-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+sudo dnf -qy module disable postgresql
+sudo dnf install -y postgresql15-server postgresql15-contrib postgresql15-pgvector
 
-| Version  | Fiscal Year | Charged D | Project Nu | Project Desc      | Project Pri     | Exp Type R | Home Dept | Home Dept Region R1 | Home Dept Region R2 | Fiscal Quarter | Fiscal Month | Home Dept VP Rollup 2 | Home Dept VP Rollup 1 | Home Dept Number | Home Dept Desc                           | Exp Type              | TM1 (Man Months) | TM1 ($$M) | ET Roll up  | ET 2        | ET 3        | ET 4  | NRE  | Proj Rollup | Dept VP         | Dept Lead | HW/SW   | Tech | Organization | Dept Incl |
-| :------- | :---------- | :-------- | :--------- | :---------------- | :-------------- | :--------- | :-------- | :------------------ | :------------------ | :------------- | :----------- | :-------------------- | :-------------------- | :--------------- | :--------------------------------------- | :-------------------- | :--------------- | :-------- | :---------- | :---------- | :---------- | :---- | :--- | :---------- | :-------------- | :-------- | :------ | :--- | :----------- | :-------- |
-| FY25 Act | 2025        | L2-WIN    | 14180      | QCA Project OH-HW | CONSHARE Direct | WIN        | USA       |                     | San Diego           | Q3             | Jun          | Tech Alloc            | Tech Alloc            | 30941            | QCT Engineering Allocation Applied - WIN | Project Allocation In | 0.xxxx           | 0.xxx     | Allocations | Allocations | Allocations | Labor | N/A  | ConnShare   | Singh, Harinder | Jones, VK | IP/Tech | HWS  | NA           | Y         |
+# Initialize and start
+sudo /usr/pgsql-15/bin/postgresql-15-setup initdb
+sudo systemctl enable --now postgresql-15
+sudo systemctl status postgresql-15
+```
 
- 
+#### Windows
 
-# ExcelQgenie Usage
+Download from https://www.postgresql.org/download/windows/ and follow the installer. After installation, start the server:
 
-## Excel data storage
-The data in excel is stored in the local vector database:
+```powershell
+& "C:\Program Files\PostgreSQL\16\bin\pg_ctl.exe" -D "C:\Users\<username>\PostgresData" -l "C:\Users\<username>\pg_log.txt" start
+```
 
-Schema for the vector Database: ``<root>/config/schema.yaml`` : Update the schema if the excel has a different schema (columns)
+#### Create Database and Extensions
 
+```bash
+psql -U postgres
+```
 
+```sql
+CREATE DATABASE cnss_opex_db;
+\c cnss_opex_db
+CREATE EXTENSION IF NOT EXISTS vector;
+\q
+```
 
-## Project config
+#### Initialize Schema
 
-Config for the project resides in : ``<root>/config/config.yaml`` 
+```bash
+python bootstrap_db.py
+```
 
-update this file to include the ``LLM API Key`` and ``LLM to USE`` , source paths, dest paths, etc.
+This creates the OpEx hybrid tables and vector store schema. The CBN Resource Planner tables (`bpafg_demand`, `priority_template`) are created automatically on first data ingestion.
 
+### SQLite (Local Development Fallback)
 
-# Vecor DB Installation
-1. Update the  ``<root>/config/config.yaml``  file to include the vectorDB configuration and ``<root>/config/schema.yaml`` for the DB schema.
-2. Run the below once to setup the database:
-  ``python bootstrap_db.py``
+No setup required. The CBN Resource Planner automatically falls back to SQLite when PostgreSQL is unavailable. The database file is created at `data/cbn_resource_planner.db`.
 
-3. Store the updated excel files in the ``<root>/data/excel_files`` directory.
-4. Data ingestion into the vector DB: 
-    ``python main.py``
+---
 
-5. Run streamlit web apps that opens up the browser window for interacting with the data:
-    ``python -m ui.launch_streamlit``
+## Data Ingestion
 
+### OpEx Data (Excel)
 
+Place Excel files in `data/excel_files/` following the OpEx schema (Fiscal Year, Project, Expense Type, Man Months, costs, etc.), then run:
 
-## Delete DB usage
+```bash
+python main.py
+```
 
-# How to Use
+### CBN Resource Planner Data
 
-Run Interactively (Recommended): Execute the script from your terminal. It will prompt you for confirmation before doing anything.
-``python clear_db.py``
+Place CSV or XLSX files in the `data/` directory:
 
-You will see the warning and be asked to type y to proceed.
+- **BPAFG Demand files** — filenames containing "bpafg" (e.g., `BPAFG - Feb_05_2026.csv`)
+- **Priority Template files** — filenames containing "priority" (e.g., `priority_template_rank0.csv`)
 
-Run with a custom config file:
-``python clear_db.py --config path/to/your/config.yaml``
+Ingest via command line:
 
-Run in a Script (Forced): If you need to use this in an automated reset script, use the --force flag to skip the interactive prompt.
-# Use with caution!
-``python clear_db.py --force``
+```bash
+# Using PostgreSQL
+python -m utils.parsers.cbn_data_parser --db postgres --data-dir data/
 
-## List DB Usage
+# Using SQLite (local dev)
+python -m utils.parsers.cbn_data_parser --db sqlite --data-dir data/
+```
 
-# How to Use
+Or upload directly through the Resource Planner UI — the upload widget appears when no data is loaded.
 
-List the first 20 rows (default):
-``python list_db.py``
+---
 
-List a specific number of rows:
-``python list_db.py --limit 5``
+## Running the Application
 
-List all rows in the table:
-``python list_db.py --all``
+```bash
+python -m ui.launch_streamlit
+```
 
-Use a different configuration file:
-``python list_db.py --config path/to/other.yaml --limit 10``
+The dashboard launches at **http://localhost:8502**. Access from another device on the same network using your machine's IP address.
 
+### Pages
 
-## Drop DB
+| Page | Description |
+|------|-------------|
+| **Resource Planner** | Mountain chart, capacity/cost panels, allocation table, project reordering |
+| **ChatBot** | AI-powered natural language financial analysis with auto-charting |
+| **Financial Trends** | Time-series trend analysis across fiscal periods |
+| **Resource Allocation** | Resource utilization and allocation views |
+| **Dept Rollup** | Department-level cost aggregation and VP rollup analysis |
+| **Geo & Org Analytics** | Country-level and organizational spending comparisons |
+| **Plotting Sandbox** | Custom visualization builder |
+| **Chat History** | Browse and review past AI chat sessions |
+| **FAQ** | Searchable frequently asked questions |
+| **About** | Platform overview and technology stack |
 
-How to run it
-Standard Run (Safe Mode)
-``python drop_db.py``
+---
 
-It will list the tables and ask you to type DELETE to confirm.
+## Project Structure
 
-Force Run (For automation)
-``python drop_db.py --force``
+```
+finance_dashbord/
+├── agents/                    # AI agent modules
+│   ├── orchestration_agent.py #   Main orchestrator (routes intent)
+│   ├── user_intent_agent.py   #   Intent classification
+│   ├── data_sql_query_agent.py#   SQL generation and execution
+│   ├── semantic_search_agent.py#  RAG-based retrieval
+│   ├── chatbot_agent.py       #   Conversational fallback
+│   └── ...                    #   Visualization, ingestion, report agents
+├── chat/                      # Chat service layer
+│   ├── chat_service.py        #   ChatService (orchestrator wrapper)
+│   ├── chat_persistence.py    #   SQLAlchemy session/message persistence
+│   └── prompts.py             #   LLM system prompt configuration
+├── config/                    # Configuration files
+│   ├── config.py              #   Unified config loader (YAML + .env)
+│   ├── config.yaml            #   Main configuration (DB, LLM, paths)
+│   ├── schema.yaml            #   Vector DB schema definition
+│   └── ...                    #   Prompts, labels, API docs
+├── data/                      # Data files
+│   ├── BPAFG - Feb_05_2026.csv
+│   ├── priority_template_rank0.csv
+│   └── CBN_Resource_Planner_v5.2_AI_Assistant_POC.html
+├── db/                        # Database layer
+│   ├── cbn_tables.py          #   CBN table definitions (Postgres + SQLite DDL)
+│   ├── setup_db.py            #   OpEx schema setup
+│   ├── data_pipeline.py       #   Excel → DB ingestion pipeline
+│   ├── vector_store.py        #   PGVector store wrapper
+│   └── ...                    #   Clear, drop, list, search utilities
+├── ui/                        # Streamlit frontend
+│   ├── streamlit_app.py       #   Main app entry point and router
+│   ├── streamlit_tools.py     #   Global CSS (greenback theme) and utilities
+│   ├── launch_streamlit.py    #   CLI launcher
+│   ├── .streamlit/config.toml #   Streamlit theme configuration
+│   └── modules/               #   Page modules
+│       ├── base.py            #     PageBase class (CSS injection, layout)
+│       ├── cbn_resource_planner.py  # Resource Planner page
+│       ├── chatbot.py         #     AI ChatBot page
+│       ├── faq.py             #     FAQ page
+│       ├── about.py           #     About page
+│       └── ...                #     Metrics, history, sandbox pages
+├── utils/                     # Utility modules
+│   ├── parsers/
+│   │   ├── cbn_data_parser.py #   BPAFG + Priority Template parser
+│   │   └── excel_to_json.py   #   Legacy Excel parser
+│   └── models/                #   Database models and providers
+├── bootstrap_db.py            # One-time DB schema initialization
+├── main.py                    # Data ingestion entry point
+├── requirements.txt           # Python dependencies
+└── README.md
+```
 
-After running this: You will need to run your ``setup_db.py`` (and potentially initialize the vector store) to recreate the schema before you can store data again.
+---
 
-# PSQL commands
-``psql -U postgres -l``
-``psql -U postgres -d cnss_opex_db``
-``CREATE EXTENSION IF NOT EXISTS vector;``
-``\d``
-``\dt``
-``\d table_name``
+## Database Utilities
 
-``DROP TABLE IF EXISTS opex_data_hybrid CASCADE;``
+```bash
+# List rows in the database
+python db/list_db.py                  # Default: first 20 rows
+python db/list_db.py --limit 5        # Specific count
+python db/list_db.py --all            # All rows
 
-``\dt``
-``\q``
+# Clear data (interactive confirmation)
+python db/clear_db.py
+python db/clear_db.py --force         # Skip confirmation (automation)
 
+# Drop tables (interactive confirmation)
+python db/drop_db.py
+python db/drop_db.py --force          # Skip confirmation (automation)
+```
 
-# Exampel Query in the chat bot
+After dropping tables, re-run `bootstrap_db.py` and data ingestion to rebuild.
 
-``For FY 25 compare Q3 vs Q4 costs associated with all the VP rollups under dept lead Jones, VK, provide analysis .``
+### Useful psql Commands
+
+```bash
+psql -U postgres -d cnss_opex_db
+```
+
+```sql
+\dt                              -- List all tables
+\d bpafg_demand                  -- Describe table schema
+\d priority_template
+SELECT COUNT(*) FROM bpafg_demand;
+SELECT DISTINCT project_name FROM bpafg_demand;
+```
+
+---
+
+## Example ChatBot Queries
+
+- "What are the top 5 projects by total demand?"
+- "Show me resource demand trends for India over the next 12 months"
+- "Compare capacity vs. demand by country"
+- "For FY25 compare Q3 vs Q4 costs associated with all VP rollups under dept lead Jones, VK — provide analysis"
+- "Which projects have the largest demand-capacity gap?"
+- "Break down total spend by expense type for FY25"
+
+---
+
+## Configuration Reference
+
+All settings can be configured via `config/config.yaml` or environment variables (`.env`). Environment variables take precedence.
+
+| Setting | YAML Path | Env Variable | Default |
+|---------|-----------|-------------|---------|
+| DB Connection | `Postgres.connection` | `POSTGRES_CONNECTION` | `postgresql+psycopg2://postgres:postgres@localhost/cnss_opex_db` |
+| DB Host | `Postgres.host` | `POSTGRES_HOST` | `localhost` |
+| DB Port | `Postgres.port` | `POSTGRES_PORT` | `5432` |
+| DB Name | `Postgres.database` | `POSTGRES_DB_NAME` | `cnss_opex_db` |
+| LLM API Key | `Qgenie.api_key` | `QGENIE_API_KEY` | — |
+| LLM Endpoint | `Qgenie.chat_endpoint` | `QGENIE_CHAT_ENDPOINT` | — |
+| Streamlit Port | — | `STREAMLIT_PORT` | `8502` |
+| Log Level | — | `LOG_LEVEL` | `INFO` |
+
+---
+
+## License
+
+See [LICENSE](LICENSE) for details.
