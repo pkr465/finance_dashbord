@@ -1,0 +1,65 @@
+Path:
+  source_path: data/excel_files
+  save_path: out
+  out_path: out
+  output_jsonl_path: out/output.jsonl
+  #input_excel_path: "data/FY25 Q4 WIN Opex_data.xlsx"
+
+Excel:
+  file_names: FY25 Q4 WIN Opex_data.xlsx, FY25 Q3 WIN Opex_data.xlsx
+
+worker: 1
+repeat: 1
+
+Agent:
+  API_backend: "xw"
+  APP_backend: "excel"
+  prompt_path: config/prompt.yaml
+  api_doc_path: config/API_document.yaml
+  use_doc_in_syspromt: true
+  use_ext_doc: true
+  use_same_LLM: true
+  use_oracle_API_doc: false
+  add_example_data2feedback: false
+  max_cycle_times: 20
+  max_error_count: 999
+
+# QGenie and LangChain API settings
+Qgenie:
+  api_key: "2320a38f-072e-4bdc-b8f7-2803d84ea36b"
+  model_name: "qgenie"
+  chat_endpoint: "https://qgenie-chat.qualcomm.com"
+  coding_model_name: "anthropic::claude-4-sonnet"
+  reasoning_model_name: "azure::gpt-5.2"
+
+Anthropic:
+  model_name: "anthropic::claude-4-sonnet"
+
+Azure:
+  model_name: "azure::gpt-4.1"
+
+Gemini:
+  model_name:
+    "vertexai::gemini-2.5-pro"
+
+    # Vector DB and model settings
+Database:
+  database_name: "Postgres"
+
+  # Postgres/PGVector settings
+Postgres:
+  connection: "postgresql+psycopg2://postgres:postgres@localhost/cnss_opex_db"
+  admin_username: "postgres"
+  admin_password: "postgres"
+  collection: "cnss_opex_db"
+  collection_tablename: "langchain_pg_collection"
+  embedding_tablename: "langchain_pg_embedding"
+  store_name: "cnss_opex_db"
+  username: "cnss_opex_db"
+  database: "cnss_opex_db"
+  password: "cnss_opex_db_password"
+  host: "localhost"
+  port: 5432
+
+Feedback:
+  email_id: "pavanr@qti.qualcomm.com"
